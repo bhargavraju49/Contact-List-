@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <script src="https://kit.fontawesome.com/eb05e95116.js" crossorigin="anonymous"></script>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/home.css">
+  </head>
+  <body>
+    <h1 id="page-heading"> 
+      <i class="fa-solid fa-address-book"></i>
+      My Contacts List
+    </h1>
+
+      <ul id="container-list">
+        <% for (let i of contact_list) {%>
+
+        <li id="list-design">
+          <div id="name-p">
+            <i class="fa-regular fa-user"></i>
+            <b><%= i.name %></b>
+            
+          </div>
+          <div id="phone-p">
+                
+                <i class="fa-solid fa-phone"></i>
+            
+                <a id="myAnchor" title="<%= i.phone %>">
+                  <b><%= i.phone %></b>
+                </a>
+
+                  <a href="#" style="color: white;"> 
+                    <i onclick="myFunction()" class="fa-regular fa-copy"></i>
+                  </a>
+            </div>
+            <div style="text-align: center;">
+              <a href="/delete-contact/<%= i.phone%>" style="color: red;">
+                <i class="fa-solid fa-trash-can"></i>
+              </a>
+            </div>
+        </li>
+        <% } %>
+      </ul>
+
+
+        <form action="/create-contact" method="POST">
+            <input type="text" name="name" placeholder="Enter Name" required>
+            <input type="number" name="phone" placeholder="Enter phn number" required>
+             
+            <button type="submit">Add contact</button>
+
+        </form>
+        <script type="text/javascript" src="/js/home.js"></script>
+  </body>
+</html>
