@@ -4,6 +4,10 @@ const path = require('path');
 
 const port = 8000;
 
+const db = require('./config/mongoose');
+
+const Contact = require('./models/contact');
+
 const app = express();
 
 app.set('view engine', 'ejs');
@@ -55,33 +59,76 @@ var contactList = [
 
 
 app.get("/",function(req,res){
-    return res.render('home', {
-        title: "My Contacts List",
-        contact_list: contactList
-    
+
+    Contact.find({}, function(err, contacts){
+        if (err) {
+            console.log('err in fetching contact in db');
+            return;
+        }
+
+        return res.render('home', {
+
+            title: "My Contacts List",
+            contact_list: contacts
+        
+        });
+
+
     });
+
+
 })
 
 
 app.post('/create-contact' , function(req,res){
-    contactList.push({
+
+    Contact.create({
         name: req.body.name,
         phone: req.body.phone
-    });           // .push req.body is also fine
-    return res.redirect('/') //can  use 'back insteadof '/'
+    }, function(err, newContact){
+        if (err)
+        {
+            console.log('error in creating contact'); 
+            return;
+        }
+
+        console.log('contact created',newContact);
+        return res.redirect('back');
+
+    });
+
+    // contactList.push({
+    //     name: req.body.name,
+    //     phone: req.body.phone
+    // });           // .push req.body is also fine
+    // return res.redirect('/') //can  use 'back insteadof '/'
 });
 
 
-app.get('/delete-contact/:phone',function(req,res){
-    let phone = req.params.phone;
+app.get('/delete-contact/:id',function(req,res){
+    // get the id from  url  
+    console.log(req.params)
+    let id = req.params.id;
 
-    let contactIndex = contactList.findIndex(contact => contact.phone == phone);
+    // find the contact in db and delete using id
 
-    if (contactIndex != -1){
-        contactList.splice(contactIndex,1);
-    }
+    Contact.findByIdAndDelete(id, function(err){
+        if (err) {
+            console.log('error in db deletion');
+            return;
+        }
 
-    return res.redirect('back');
+        return res.redirect('back');
+
+    });
+
+    // let contactIndex = contactList.findIndex(contact => contact.phone == phone);
+
+    // if (contactIndex != -1){
+    //     contactList.splice(contactIndex,1);
+    // }
+
+    // return res.redirect('back');
 
 
 });
